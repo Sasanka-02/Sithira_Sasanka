@@ -1,0 +1,114 @@
+---
+/**
+ * Purpose: Fixed top navigation with terminal-prompt logo, active-section tracking and mobile menu.
+ */
+import { Icon } from 'astro-icon/components';
+import { profile } from '@/data/portfolio';
+
+const links = [
+  { href: '#about', label: 'about' },
+  { href: '#education', label: 'education' },
+  { href: '#skills', label: 'skills' },
+  { href: '#projects', label: 'projects' },
+  { href: '#experience', label: 'experience' },
+  { href: '#credentials', label: 'credentials' },
+  { href: '#contact', label: 'contact' }
+];
+---
+
+<header class="fixed inset-x-0 top-0 z-50 border-b border-line bg-core/80 backdrop-blur-md">
+  <nav class="container-x flex h-16 items-center justify-between gap-4" aria-label="Primary">
+    <a href="#top" class="shrink-0 whitespace-nowrap font-mono text-sm text-head" aria-label="Back to top">
+      <span class="text-matrix">{profile.handle}</span><span class="text-body">@</span>core<span class="text-body">:~$</span><span class="cursor" aria-hidden="true"></span>
+    </a>
+
+    <ul class="hidden items-center gap-1 lg:flex">
+      {links.map((link) => (
+        <li>
+          <a
+            href={link.href}
+            data-nav-link
+            class="whitespace-nowrap rounded-md px-2 py-2 font-mono text-[13px] xl:px-3 text-body transition-colors hover:text-head aria-[current=true]:text-matrix"
+          >
+            <span class="text-body/50">./</span>{link.label}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <div class="flex shrink-0 items-center gap-3">
+      <span class="hidden items-center gap-2 whitespace-nowrap font-mono text-xs text-matrix sm:inline-flex lg:hidden 2xl:inline-flex">
+        <span class="pulse-dot"></span> open to work
+      </span>
+      <a href={profile.cvUrl} class="btn-primary hidden !px-4 !py-2 sm:inline-flex" download>
+        <Icon name="mdi:download" class="h-4 w-4" /> CV
+      </a>
+      <button
+        id="menu-toggle"
+        type="button"
+        class="inline-flex h-10 w-10 items-center justify-center rounded-md border border-line text-head lg:hidden"
+        aria-expanded="false"
+        aria-controls="mobile-menu"
+        aria-label="Open menu"
+      >
+        <Icon name="mdi:menu" class="h-5 w-5" data-icon-open />
+        <Icon name="mdi:close" class="hidden h-5 w-5" data-icon-close />
+      </button>
+    </div>
+  </nav>
+
+  <div id="mobile-menu" class="hidden border-t border-line bg-core/95 lg:hidden">
+    <ul class="container-x grid gap-1 py-4">
+      {links.map((link) => (
+        <li>
+          <a href={link.href} class="block rounded-md px-3 py-3 font-mono text-sm text-body hover:bg-surface hover:text-matrix">
+            <span class="text-matrix">$</span> cd {link.label}
+          </a>
+        </li>
+      ))}
+      <li class="pt-2">
+        <a href={profile.cvUrl} class="btn-primary w-full" download>
+          <Icon name="mdi:download" class="h-4 w-4" /> Download CV
+        </a>
+      </li>
+    </ul>
+  </div>
+</header>
+
+<script>
+  const toggle = document.getElementById('menu-toggle');
+  const menu = document.getElementById('mobile-menu');
+
+  const setOpen = (open: boolean) => {
+    if (!toggle || !menu) return;
+    menu.classList.toggle('hidden', !open);
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    toggle.querySelector('[data-icon-open]')?.classList.toggle('hidden', open);
+    toggle.querySelector('[data-icon-close]')?.classList.toggle('hidden', !open);
+  };
+
+  toggle?.addEventListener('click', () => setOpen(menu?.classList.contains('hidden') ?? false));
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setOpen(false)));
+
+  // Highlight the nav link for the section currently in view
+  const navLinks = document.querySelectorAll<HTMLAnchorElement>('[data-nav-link]');
+  const sections = [...navLinks]
+    .map((a) => document.querySelector<HTMLElement>(a.getAttribute('href') ?? ''))
+    .filter((s): s is HTMLElement => s !== null);
+
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          navLinks.forEach((a) =>
+            a.setAttribute('aria-current', String(a.getAttribute('href') === `#${entry.target.id}`))
+          );
+        }
+      },
+      { rootMargin: '-45% 0px -50% 0px' }
+    );
+    sections.forEach((s) => io.observe(s));
+  }
+</script>

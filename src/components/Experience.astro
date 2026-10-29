@@ -1,0 +1,63 @@
+---
+/**
+ * Purpose: Work experience rendered as a tagged operations log.
+ */
+import { Icon } from 'astro-icon/components';
+import { experience } from '@/data/portfolio';
+
+// Security and VPN entries use the crimson accent; everything else is green.
+const redTags = new Set(['SEC', 'VPN']);
+---
+
+<section id="experience" class="section border-t border-line">
+  <div class="container-x">
+    <div data-reveal>
+      <p class="eyebrow"><span class="text-body">//</span> 05 · experience</p>
+      <h2 class="section-title">Change log</h2>
+      <p class="section-lead">What I worked on during my six-month internship on a 24/7 IT/OT network.</p>
+    </div>
+
+    {experience.map((job) => (
+      <article class="term mt-12" data-reveal>
+        <div class="term-bar">
+          <span class="term-dot bg-crimson"></span>
+          <span class="term-dot bg-body/40"></span>
+          <span class="term-dot bg-matrix"></span>
+          <span class="ml-3 truncate text-body">tail -n {job.log.length} /var/log/cwit/ops.log</span>
+        </div>
+
+        <div class="grid gap-8 p-5 sm:p-8 lg:grid-cols-[17rem_1fr] lg:gap-12">
+          <header>
+            <span class="badge-muted">{job.period} · completed</span>
+            <h3 class="mt-4 text-xl font-bold">{job.role}</h3>
+            <p class="mt-2 font-medium text-head/90">{job.company}</p>
+            <p class="mt-1 inline-flex items-center gap-1.5 font-mono text-xs">
+              <Icon name="mdi:map-marker-outline" class="h-4 w-4 text-matrix" />{job.location}
+            </p>
+            <p class="mt-4 text-sm leading-relaxed">{job.summary}</p>
+          </header>
+
+          <ol class="space-y-0 font-mono text-[13px]">
+            {job.log.map((entry, i) => (
+              <li class="grid grid-cols-[auto_1fr] gap-x-4 border-l border-line py-3 pl-5 relative">
+                <span
+                  class:list={[
+                    'absolute -left-[5px] top-[18px] h-2.5 w-2.5 rounded-full border-2 border-surface',
+                    redTags.has(entry.tag) ? 'bg-crimson' : 'bg-matrix'
+                  ]}
+                  aria-hidden="true"
+                />
+                <span class:list={['w-12 pt-px font-bold', redTags.has(entry.tag) ? 'text-crimson' : 'text-matrix']}>
+                  [{entry.tag}]
+                </span>
+                <span class="font-sans text-sm leading-relaxed text-body">
+                  <span class="sr-only">Entry {i + 1}: </span>{entry.text}
+                </span>
+              </li>
+            ))}
+          </ol>
+        </div>
+      </article>
+    ))}
+  </div>
+</section>

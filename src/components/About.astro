@@ -1,0 +1,188 @@
+---
+/**
+ * Purpose: About section with narrative, a neofetch-style profile card and a
+ * representative IT/OT topology of the kind of network Sithira has supported.
+ */
+import { Icon } from 'astro-icon/components';
+import { profile } from '@/data/portfolio';
+
+type Tone = 'muted' | 'core' | 'red';
+interface Node { id: string; x: number; y: number; w: number; label: string; tone: Tone }
+
+const nodes: Node[] = [
+  { id: 'wan', x: 240, y: 28, w: 110, label: 'WAN / ISP', tone: 'muted' },
+  { id: 'partner', x: 408, y: 28, w: 124, label: 'PARTNER SITE', tone: 'muted' },
+  { id: 'fw', x: 240, y: 100, w: 212, label: 'FW · FortiGate / PAN-OS', tone: 'red' },
+  { id: 'core', x: 240, y: 172, w: 110, label: 'CORE', tone: 'core' },
+  { id: 'dc', x: 72, y: 172, w: 132, label: 'DC · DR · vCenter', tone: 'muted' },
+  { id: 'wlc', x: 408, y: 172, w: 124, label: 'WLC · DNAC', tone: 'muted' },
+  { id: 'agg1', x: 90, y: 250, w: 118, label: 'AGG · ABB', tone: 'core' },
+  { id: 'agg2', x: 240, y: 250, w: 118, label: 'AGG · ZPMC', tone: 'core' },
+  { id: 'agg3', x: 390, y: 250, w: 118, label: 'AGG · CAMCO', tone: 'core' },
+  { id: 'yard', x: 60, y: 330, w: 100, label: 'Yard SW', tone: 'muted' },
+  { id: 'rco', x: 180, y: 330, w: 100, label: 'RCO desks', tone: 'muted' },
+  { id: 'crmg', x: 300, y: 330, w: 100, label: 'CRMG cranes', tone: 'muted' },
+  { id: 'itv', x: 420, y: 330, w: 100, label: 'Wi-Fi → ITVs', tone: 'muted' }
+];
+
+const H = 30;
+const byId = Object.fromEntries(nodes.map((n) => [n.id, n]));
+
+// [from, to] — drawn from bottom of `from` to top of `to`, or side-to-side on the same row
+const links: [string, string][] = [
+  ['wan', 'fw'], ['fw', 'core'], ['core', 'agg1'], ['core', 'agg2'], ['core', 'agg3'],
+  ['agg1', 'yard'], ['agg2', 'rco'], ['agg3', 'crmg'], ['agg3', 'itv']
+];
+const sideLinks: [string, string][] = [['core', 'dc'], ['core', 'wlc']];
+
+const vPath = (a: Node, b: Node) => `M${a.x} ${a.y + H / 2} L${b.x} ${b.y - H / 2}`;
+const hPath = (a: Node, b: Node) => {
+  const dir = b.x > a.x ? 1 : -1;
+  return `M${a.x + (dir * a.w) / 2} ${a.y} L${b.x - (dir * b.w) / 2} ${b.y}`;
+};
+
+const paths = [
+  ...links.map(([a, b]) => vPath(byId[a], byId[b])),
+  ...sideLinks.map(([a, b]) => hPath(byId[a], byId[b]))
+];
+const fw = byId.fw;
+const partner = byId.partner;
+const tunnel = `M${partner.x} ${partner.y + H / 2} C${partner.x} ${fw.y - 10}, ${fw.x + fw.w / 2 + 40} ${fw.y}, ${fw.x + fw.w / 2} ${fw.y}`;
+
+const toneStyle: Record<Tone, { stroke: string; text: string; fill: string }> = {
+  muted: { stroke: 'rgba(148,163,184,0.35)', text: '#94A3B8', fill: '#0F172A' },
+  core: { stroke: 'rgba(16,185,129,0.6)', text: '#F8FAFC', fill: '#0F172A' },
+  red: { stroke: 'rgba(225,29,72,0.75)', text: '#F8FAFC', fill: 'rgba(225,29,72,0.08)' }
+};
+
+const spec = [
+  { key: 'last role', value: 'IT Intern (Network & Systems)', icon: 'mdi:badge-account-horizontal-outline' },
+  { key: 'internship', value: 'CWIT · Apr – Oct 2026 (completed)', icon: 'mdi:calendar-check-outline' },
+  { key: 'environment', value: '24/7 IT/OT · Colombo Port', icon: 'mdi:server-network' },
+  { key: 'education', value: 'BSc (Hons) IT · SLIIT · final year', icon: 'mdi:school-outline' },
+  { key: 'hands-on with', value: 'Cisco IOS · FortiOS · WLC · DNAC', icon: 'mdi:console' },
+  { key: 'seeking', value: profile.seeking, icon: 'mdi:briefcase-search-outline' }
+];
+---
+
+<section id="about" class="section border-t border-line">
+  <div class="container-x">
+    <div data-reveal>
+      <p class="eyebrow"><span class="text-body">//</span> 01 · about</p>
+      <h2 class="section-title">Building reliable, Secure networks</h2>
+    </div>
+
+    <!-- Profile card -->
+    <div
+      class="card relative mt-12 overflow-hidden p-5 sm:p-8"
+      style="border-color: rgba(16,185,129,0.35); box-shadow: 0 30px 60px -30px rgba(16,185,129,0.25);"
+      data-reveal
+    >
+      <div
+        class="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full opacity-30 blur-3xl"
+        style="background: radial-gradient(closest-side, rgba(16,185,129,0.4), transparent);"
+        aria-hidden="true"
+      ></div>
+
+      <div class="relative flex flex-col gap-8 md:flex-row md:items-center lg:gap-12">
+        <div class="mx-auto shrink-0 md:mx-0">
+          <div class="relative">
+            <img
+              src={profile.photoUrl}
+              alt={`Portrait of ${profile.fullName}`}
+              width="600"
+              height="900"
+              loading="lazy"
+              decoding="async"
+              class="aspect-[2/3] h-auto w-56 rounded-2xl object-cover ring-2 ring-matrix/60 ring-offset-4 ring-offset-surface sm:w-60 lg:w-64"
+            />
+            <span class="absolute -bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-full border border-matrix/40 bg-core px-3 py-1 font-mono text-xs text-matrix">
+              <span class="pulse-dot"></span> open to work
+            </span>
+          </div>
+        </div>
+
+        <div class="min-w-0 flex-1">
+          <p class="font-mono text-sm text-body">
+            <span class="text-matrix">{profile.handle}</span>@secure-core<span class="text-body">:~$</span> cat profile
+          </p>
+          <h3 class="mt-2 text-3xl font-bold sm:text-4xl">{profile.fullName}</h3>
+          <p class="mt-2 text-lg text-head/80">IT Undergraduate <span class="text-crimson">/</span> Network &amp; Systems Engineering</p>
+
+          <dl class="mt-7 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {spec.map((s) => (
+              <div class="rounded-lg border border-line bg-core/60 p-4 transition-colors hover:border-matrix/50">
+                <dt class="flex items-center gap-2 font-mono text-[11px] uppercase tracking-widest text-matrix">
+                  <Icon name={s.icon} class="h-4 w-4" />{s.key}
+                </dt>
+                <dd class="mt-1.5 text-[15px] font-medium leading-snug text-head">{s.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-12 grid gap-8 lg:grid-cols-[1fr_1.1fr] lg:gap-12">
+      <div data-reveal>
+        <div class="space-y-4 text-base leading-relaxed sm:text-[17px]">
+          {profile.about.map((para) => <p>{para}</p>)}
+        </div>
+      </div>
+
+      <figure class="term self-start" data-reveal>
+        <div class="term-bar">
+          <span class="term-dot bg-crimson"></span>
+          <span class="term-dot bg-body/40"></span>
+          <span class="term-dot bg-matrix"></span>
+          <span class="ml-3 text-body">topology.vsdx</span>
+          <span class="ml-auto hidden text-body/70 sm:inline">representative</span>
+        </div>
+        <div class="p-3 sm:p-5">
+          <svg viewBox="0 0 480 360" class="h-auto w-full" role="img" aria-labelledby="topo-title topo-desc">
+            <title id="topo-title">Representative IT/OT network topology</title>
+            <desc id="topo-desc">
+              A WAN link and an IPsec tunnel to a partner site terminate on a firewall pair, which feeds a core switch.
+              The core connects to the data centers, the wireless controller and three aggregation switches for automation
+              vendors, which in turn serve yard switches, remote crane-operator desks, cranes and Wi-Fi for driverless vehicles.
+            </desc>
+
+            {paths.map((d) => (
+              <g>
+                <path d={d} stroke="rgba(148,163,184,0.22)" stroke-width="1.5" fill="none" />
+                <path d={d} stroke="#10B981" stroke-width="1.5" fill="none" stroke-dasharray="3 9" class="topo-flow" />
+              </g>
+            ))}
+
+            <path d={tunnel} stroke="#E11D48" stroke-width="1.5" fill="none" stroke-dasharray="6 5" class="topo-flow" />
+            <text x={partner.x - 4} y={fw.y - 26} font-family="JetBrains Mono, monospace" font-size="10" fill="#E11D48">IPsec</text>
+
+            {nodes.map((n) => {
+              const s = toneStyle[n.tone];
+              return (
+                <g>
+                  <rect x={n.x - n.w / 2} y={n.y - H / 2} width={n.w} height={H} rx="6" fill={s.fill} stroke={s.stroke} stroke-width="1.2" />
+                  <text x={n.x} y={n.y + 4} text-anchor="middle" font-family="JetBrains Mono, monospace" font-size="11" fill={s.text}>
+                    {n.label}
+                  </text>
+                </g>
+              );
+            })}
+          </svg>
+        </div>
+        <figcaption class="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-line px-4 py-3 font-mono text-[11px] text-body sm:px-5">
+          <span class="inline-flex items-center gap-2"><span class="h-px w-5 bg-matrix"></span>live link</span>
+          <span class="inline-flex items-center gap-2"><span class="h-px w-5 border-t border-dashed border-crimson"></span>encrypted tunnel</span>
+          <span class="inline-flex items-center gap-2"><span class="h-2.5 w-2.5 rounded-sm border border-crimson"></span>security boundary</span>
+          <span class="w-full text-body/70">Simplified for illustration; not an actual production diagram.</span>
+        </figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<style>
+  .topo-flow {
+    animation: dash 1.4s linear infinite;
+  }
+</style>

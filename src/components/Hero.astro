@@ -1,0 +1,182 @@
+---
+/**
+ * Purpose: Landing hero with identity, CTAs, a live-typing terminal readout and headline metrics.
+ */
+import { Icon } from 'astro-icon/components';
+import { metrics, profile } from '@/data/portfolio';
+
+// PROD = used during the CWIT internship, LAB = home lab / self-study
+const statusLines = [
+  { state: 'PROD', key: 'switching', value: 'vlan · 802.1q · uplinks' },
+  { state: 'PROD', key: 'wireless', value: 'wlc · roaming · dnac' },
+  { state: 'PROD', key: 'security', value: 'fortigate 101f · policies' },
+  { state: 'PROD', key: 'vpn', value: 'ipsec s2s (assisted)' },
+  { state: 'PROD', key: 'physical', value: 'fiber · fluke versiv 2' },
+  { state: 'LAB', key: 'cloud', value: 'aws vpc · cloudformation' },
+  { state: 'LAB', key: 'firewall', value: 'pan-os ha · user-id' },
+  { state: 'STUDY', key: 'cert', value: 'ccna (in progress)' },
+  { state: 'ALERT', key: 'career', value: 'seeking network / noc role' }
+];
+
+const chips = [
+  { name: 'Cisco IOS', prod: true },
+  { name: 'FortiGate', prod: true },
+  { name: 'Cisco WLC', prod: true },
+  { name: 'Catalyst Center', prod: true },
+  { name: 'Fiber & FLUKE', prod: true },
+  { name: 'AWS VPC (lab)', prod: false }
+];
+---
+
+<section id="top" class="relative overflow-hidden pb-16 pt-28 sm:pt-32 lg:pb-24 lg:pt-40">
+  <div class="grid-bg pointer-events-none absolute inset-0" aria-hidden="true"></div>
+  <div
+    class="pointer-events-none absolute -top-40 left-1/2 h-[480px] w-[780px] -translate-x-1/2 rounded-full opacity-25 blur-3xl"
+    style="background: radial-gradient(closest-side, rgba(16,185,129,0.35), transparent);"
+    aria-hidden="true"
+  ></div>
+
+  <div class="container-x relative grid items-center gap-12 lg:grid-cols-[1.05fr_1fr] lg:gap-14">
+    <div>
+      <p class="mb-6 inline-flex items-center gap-2 rounded-full border border-line bg-surface/60 px-3 py-1.5 font-mono text-xs text-body">
+        <span class="pulse-dot"></span>
+        <span><span class="text-matrix">status:</span> available · {profile.location}</span>
+      </p>
+
+      <p class="font-mono text-sm text-matrix">$ whoami</p>
+      <h1 class="mt-3 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+        {profile.fullName}
+      </h1>
+      <p class="mt-4 text-xl font-semibold text-head/90 sm:text-2xl">
+        IT Undergraduate
+        <span class="text-crimson">/</span>
+        <span class="text-body">Network &amp; Systems Engineering</span>
+      </p>
+      <p class="mt-5 max-w-xl text-base leading-relaxed sm:text-lg">
+        {profile.summary} {profile.tagline}
+      </p>
+
+      <ul class="mt-6 flex flex-wrap gap-2" aria-label="Core platforms">
+        {chips.map((chip) => (
+          <li class:list={['tag', chip.prod ? 'tag-prod' : 'tag-lab']}>{chip.name}</li>
+        ))}
+      </ul>
+
+      <div class="mt-8 flex flex-wrap gap-3">
+        <a href="#projects" class="btn-primary">
+          View projects <Icon name="mdi:arrow-right" class="h-4 w-4" />
+        </a>
+        <a href={profile.cvUrl} class="btn-ghost" download>
+          <Icon name="mdi:download" class="h-4 w-4" /> Download CV
+        </a>
+      </div>
+
+      <div class="mt-8 flex items-center gap-4 text-body">
+        <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="transition-colors hover:text-matrix">
+          <Icon name="mdi:github" class="h-6 w-6" />
+        </a>
+        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="transition-colors hover:text-matrix">
+          <Icon name="mdi:linkedin" class="h-6 w-6" />
+        </a>
+        <a href={`mailto:${profile.email}`} aria-label="Email" class="transition-colors hover:text-matrix">
+          <Icon name="mdi:email-outline" class="h-6 w-6" />
+        </a>
+      </div>
+    </div>
+
+    <!-- Terminal readout -->
+    <div class="term relative" role="img" aria-label="Terminal listing Sithira's skill areas, marked as used during the internship, lab work, or currently studying">
+
+      <div class="term-bar">
+        <span class="term-dot bg-crimson"></span>
+        <span class="term-dot bg-body/40"></span>
+        <span class="term-dot bg-matrix"></span>
+        <span class="ml-3 truncate text-body">sithira@secure-core: ~</span>
+        <span class="ml-auto hidden text-matrix sm:inline">ssh · tls1.3</span>
+      </div>
+
+      <div id="hero-term" class="min-h-[22rem] space-y-1 p-4 font-mono text-[12.5px] leading-6 sm:p-6 sm:text-[13px]" aria-hidden="true">
+        <div data-line data-cmd="show status --core">
+          <span class="text-matrix">sithira@core</span><span class="text-body">:~$ </span><span data-cmd-text class="text-head">show status --core</span>
+        </div>
+        <div data-line class="text-body/70">prod = internship at CWIT · lab = self-built</div>
+        {statusLines.map((line) => (
+          <div data-line class="flex gap-3 whitespace-nowrap">
+            <span
+              class:list={[
+                'w-[7ch] shrink-0',
+                line.state === 'PROD' && 'text-matrix',
+                (line.state === 'LAB' || line.state === 'STUDY') && 'text-body',
+                line.state === 'ALERT' && 'text-crimson'
+              ]}
+            >
+              [{line.state}]
+            </span>
+            <span class="w-20 shrink-0 text-head sm:w-24">{line.key}</span>
+            <span class:list={['truncate', line.state === 'ALERT' ? 'text-crimson' : 'text-body']}>{line.value}</span>
+          </div>
+        ))}
+        <div data-line data-cmd="ping recruiter -c 1" class="pt-2">
+          <span class="text-matrix">sithira@core</span><span class="text-body">:~$ </span><span data-cmd-text class="text-head">ping recruiter -c 1</span>
+        </div>
+        <div data-line class="text-body">64 bytes from {profile.email.split('@')[0]}: time=&lt;24h</div>
+        <div data-line>
+          <span class="text-matrix">sithira@core</span><span class="text-body">:~$ </span><span class="cursor"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Metrics strip -->
+  <div class="container-x relative mt-16 lg:mt-20">
+    <dl class="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      {metrics.map((m) => (
+        <div class="card card-hover p-5" data-reveal>
+          <dt class="font-mono text-[11px] uppercase tracking-widest text-body">{m.label}</dt>
+          <dd class="mt-2 text-3xl font-bold text-head">{m.value}</dd>
+          <dd class="mt-1 font-mono text-xs text-matrix">{m.detail}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<script>
+  // Replay the terminal: type each command, then print its output lines.
+  const term = document.getElementById('hero-term');
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (term && !reduce) {
+    const lines = [...term.querySelectorAll<HTMLElement>('[data-line]')];
+    lines.forEach((l) => (l.style.visibility = 'hidden'));
+
+    const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+    const run = async () => {
+      for (const line of lines) {
+        line.style.visibility = 'visible';
+        const cmd = line.dataset.cmd;
+        const target = line.querySelector<HTMLElement>('[data-cmd-text]');
+        if (cmd && target) {
+          target.textContent = '';
+          for (const ch of cmd) {
+            target.textContent += ch;
+            await wait(38 + Math.random() * 40);
+          }
+          await wait(260);
+        } else {
+          await wait(110);
+        }
+      }
+    };
+
+    // Start only once the terminal is on screen
+    const io = new IntersectionObserver((entries) => {
+      if (entries.some((e) => e.isIntersecting)) {
+        io.disconnect();
+        run();
+      }
+    });
+    io.observe(term);
+  }
+</script>

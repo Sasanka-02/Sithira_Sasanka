@@ -1,0 +1,111 @@
+---
+/**
+ * Purpose: Skill domains as terminal-style cards, filterable by category,
+ * with each skill marked by where it was used (production, lab, academic).
+ */
+import { Icon } from 'astro-icon/components';
+import { categories, skillDomains, softSkills } from '@/data/portfolio';
+
+const used = new Set(skillDomains.map((d) => d.category));
+const tabs = categories.filter((c) => c.id === 'all' || used.has(c.id));
+const totalProd = skillDomains.flatMap((d) => d.skills).filter((s) => s.env === 'prod').length;
+---
+
+<section id="skills" class="section border-t border-line">
+  <div class="container-x">
+    <div class="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between" data-reveal>
+      <div>
+        <p class="eyebrow"><span class="text-body">//</span> 03 · skills</p>
+        <h2 class="section-title">Network engineering, layer by layer</h2>
+        <p class="section-lead">
+          From fiber in the yard to firewall policy and cloud VPCs. {totalProd} of these I used on a live network during my
+          internship. The label on each one shows where I learned it.
+        </p>
+      </div>
+
+      <ul class="flex flex-wrap gap-x-5 gap-y-2 font-mono text-xs" aria-label="Legend">
+        <li class="inline-flex items-center gap-2 text-head"><span class="h-2 w-2 rounded-full bg-matrix"></span>internship · CWIT</li>
+        <li class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full border border-dashed border-body"></span>lab</li>
+        <li class="inline-flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-body/40"></span>academic</li>
+      </ul>
+    </div>
+
+    <div class="mt-10 flex flex-wrap gap-2" role="group" aria-label="Filter skills by category" data-reveal>
+      {tabs.map((t, i) => (
+        <button type="button" class="filter-btn" data-skill-filter={t.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+          {t.id === 'all' ? '*' : `--${t.label}`}
+        </button>
+      ))}
+    </div>
+
+    <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-3" id="skill-grid">
+      {skillDomains.map((d) => {
+        const prod = d.skills.filter((s) => s.env === 'prod').length;
+        return (
+          <article class="term card-hover flex flex-col" data-skill-card data-category={d.category} data-reveal>
+            <div class="term-bar">
+              <span class="text-matrix">$</span>
+              <span class="truncate text-body">{d.command}</span>
+            </div>
+            <div class="flex flex-1 flex-col p-5">
+              <div class="flex items-start gap-3">
+                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-line bg-core text-matrix">
+                  <Icon name={d.icon} class="h-5 w-5" />
+                </span>
+                <div class="min-w-0">
+                  <h3 class="text-lg font-semibold">{d.title}</h3>
+                  <p class="mt-1 text-sm leading-relaxed">{d.summary}</p>
+                </div>
+              </div>
+
+              <ul class="mt-5 flex flex-wrap gap-2">
+                {d.skills.map((s) => (
+                  <li
+                    class:list={['tag', { 'tag-prod': s.env === 'prod', 'tag-lab': s.env === 'lab' }]}
+                    title={s.env === 'prod' ? 'Used during the CWIT internship' : s.env === 'lab' ? 'Home lab / self-study' : 'Academic'}
+                  >
+                    {s.env === 'prod' && <span class="h-1.5 w-1.5 rounded-full bg-matrix" aria-hidden="true" />}
+                    {s.name}
+                    <span class="sr-only">({s.env})</span>
+                  </li>
+                ))}
+              </ul>
+
+              <p class="mt-auto pt-5 font-mono text-[11px] text-body/80">
+                {prod > 0 ? (
+                  <span><span class="text-matrix">{prod}/{d.skills.length}</span> used at CWIT</span>
+                ) : (
+                  <span>{d.skills.length} skills · {d.skills[0].env}</span>
+                )}
+              </p>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <div class="mt-8 flex flex-wrap items-center gap-2" data-reveal>
+      <span class="mr-2 inline-flex items-center gap-2 font-mono text-xs text-body">
+        <Icon name="mdi:account-group" class="h-4 w-4 text-matrix" /> soft skills:
+      </span>
+      {softSkills.map((s) => <span class="tag">{s}</span>)}
+    </div>
+  </div>
+</section>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-skill-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-skill-card]');
+
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.skillFilter;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((card) => {
+        const show = filter === 'all' || card.dataset.category === filter;
+        card.hidden = !show;
+        if (show) card.classList.add('is-visible');
+      });
+    })
+  );
+</script>

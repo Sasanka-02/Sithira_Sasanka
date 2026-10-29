@@ -1,0 +1,118 @@
+---
+/**
+ * Purpose: Education section — featured degree card (modules + completed research) and other qualifications.
+ */
+import { Icon } from 'astro-icon/components';
+import { degree, education } from '@/data/portfolio';
+---
+
+<section id="education" class="section border-t border-line">
+  <div class="container-x">
+    <div data-reveal>
+      <p class="eyebrow"><span class="text-body">//</span> 02 · education</p>
+      <h2 class="section-title">Education & qualifications</h2>
+      <p class="section-lead">
+        Final-year IT undergraduate at SLIIT, with a networking module, a six-month internship and a research project
+        already completed.
+      </p>
+    </div>
+
+    <!-- Featured degree -->
+    <article
+      class="card relative mt-12 overflow-hidden"
+      style="border-color: rgba(16,185,129,0.35); box-shadow: 0 30px 60px -30px rgba(16,185,129,0.25);"
+      data-reveal
+    >
+      <div class="term-bar">
+        <span class="term-dot bg-crimson"></span>
+        <span class="term-dot bg-body/40"></span>
+        <span class="term-dot bg-matrix"></span>
+        <span class="ml-3 truncate text-body">cat ~/education/bsc-it.md</span>
+      </div>
+
+      <div class="grid gap-8 p-5 sm:p-8 lg:grid-cols-[1.15fr_1fr] lg:gap-10">
+        <div>
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="badge-green"><span class="pulse-dot !h-1.5 !w-1.5"></span>{degree.status}</span>
+            <span class="badge-muted">{degree.period}</span>
+          </div>
+
+          <div class="mt-5 flex items-start gap-4">
+            <span class="hidden h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-matrix/40 bg-core text-matrix sm:flex">
+              <Icon name="mdi:school-outline" class="h-7 w-7" />
+            </span>
+            <div class="min-w-0">
+              <h3 class="text-2xl font-bold leading-tight sm:text-3xl">{degree.degree}</h3>
+              <p class="mt-2 text-base font-medium text-head/85 sm:text-lg">{degree.institution}</p>
+              <p class="mt-1 text-sm">{degree.specialisation}</p>
+            </div>
+          </div>
+
+          <p class="mt-7 font-mono text-xs uppercase tracking-widest text-matrix">$ ls modules/</p>
+          <ul class="mt-3 grid gap-2">
+            {degree.modules.map((m) => (
+              <li
+                class:list={[
+                  'flex items-center gap-3 rounded-lg border bg-core/60 px-4 py-3',
+                  m.network ? 'border-matrix/50' : 'border-line'
+                ]}
+              >
+                <span class:list={['w-16 shrink-0 font-mono text-xs font-bold', m.network ? 'text-matrix' : 'text-body']}>
+                  {m.code}
+                </span>
+                <span class="min-w-0 text-sm font-medium text-head">{m.name}</span>
+                {m.network && <span class="badge-green ml-auto hidden shrink-0 sm:inline-flex">networking</span>}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <!-- Completed research -->
+        <div class="flex flex-col rounded-xl border border-line bg-core/60 p-5 sm:p-6">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="font-mono text-xs uppercase tracking-widest text-matrix">final-year research</span>
+            <span class="badge-green ml-auto">
+              <Icon name="mdi:check-decagram" class="h-3.5 w-3.5" />{degree.research.status}
+            </span>
+          </div>
+          <h4 class="mt-4 text-xl font-semibold leading-snug text-head">{degree.research.title}</h4>
+          <p class="mt-1 font-mono text-xs text-body/80">{degree.research.code} · SLIIT 2026</p>
+          <p class="mt-4 text-sm leading-relaxed">{degree.research.summary}</p>
+
+          <div class="mt-auto flex flex-wrap gap-3 pt-6">
+            {degree.research.links.map((l, i) => (
+              <a
+                href={l.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                class={i === 0 ? 'btn-primary !px-4 !py-2.5' : 'btn-ghost !px-4 !py-2.5'}
+              >
+                <Icon name={l.icon} class="h-4 w-4" /> {l.label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    </article>
+
+    <!-- Other qualifications -->
+    <ol class="mt-6 grid gap-4 md:grid-cols-3">
+      {education.map((e) => (
+        <li class="card card-hover flex flex-col p-5 sm:p-6" data-reveal>
+          <div class="flex items-center justify-between gap-3">
+            <Icon name="mdi:certificate-outline" class="h-5 w-5 text-matrix" />
+            {e.period && <span class="font-mono text-xs text-matrix">{e.period}</span>}
+          </div>
+          <h3 class="mt-4 text-lg font-semibold leading-snug">{e.degree}</h3>
+          <p class="mt-1 text-sm">{e.institution}</p>
+          {e.detail && <p class="mt-3 text-sm leading-relaxed text-head/80">{e.detail}</p>}
+          {e.results && (
+            <ul class="mt-auto flex flex-wrap gap-1.5 pt-4">
+              {e.results.map((r) => <li class="tag !px-2 !py-0.5 !text-[11px]">{r}</li>)}
+            </ul>
+          )}
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>

@@ -1,0 +1,5 @@
+# Purpose: Robots configuration for portfolio website.
+User-agent: *
+Allow: /
+
+Sitemap: https://Sasanka-02.github.io/sitemap.xml

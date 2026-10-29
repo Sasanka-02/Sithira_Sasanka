@@ -1,0 +1,14 @@
+---
+/**
+ * Purpose: Site footer with copyright notice.
+ */
+import { profile } from '@/data/portfolio';
+
+const year = new Date().getFullYear();
+---
+
+<footer class="border-t border-line py-8">
+  <p class="container-x text-center font-mono text-xs">
+    © {profile.fullName} {year}. All rights reserved.
+  </p>
+</footer>

@@ -1,0 +1,72 @@
+---
+/**
+ * Purpose: Contact section styled as an SSH session, plus direct contact channels.
+ */
+import { Icon } from 'astro-icon/components';
+import { profile } from '@/data/portfolio';
+
+const channels = [
+  { label: 'email', value: profile.email, href: `mailto:${profile.email}`, icon: 'mdi:email-outline' },
+  { label: 'phone', value: profile.phone, href: `tel:${profile.phone.replace(/\s/g, '')}`, icon: 'mdi:phone-outline' },
+  { label: 'linkedin', value: 'sithira-sasanka', href: profile.linkedin, icon: 'mdi:linkedin' },
+  { label: 'github', value: 'Sasanka-02', href: profile.github, icon: 'mdi:github' }
+];
+---
+
+<section id="contact" class="section border-t border-line">
+  <div class="container-x">
+    <div class="grid gap-10 lg:grid-cols-[1fr_1.1fr] lg:items-center">
+      <div data-reveal>
+        <p class="eyebrow"><span class="text-body">//</span> 07 · contact</p>
+        <h2 class="section-title">Let's connect</h2>
+        <p class="section-lead">
+          I'm looking for a <span class="text-head">{profile.seeking}</span> role where I can keep networks running
+          reliably and securely. Email is the fastest way to reach me.
+        </p>
+        <div class="mt-8 flex flex-wrap gap-3">
+          <a href={`mailto:${profile.email}`} class="btn-primary">
+            <Icon name="mdi:send" class="h-4 w-4" /> Send an email
+          </a>
+          <a href={profile.cvUrl} class="btn-ghost" download>
+            <Icon name="mdi:download" class="h-4 w-4" /> Download CV
+          </a>
+        </div>
+      </div>
+
+      <div class="term" data-reveal>
+        <div class="term-bar">
+          <span class="term-dot bg-crimson"></span>
+          <span class="term-dot bg-body/40"></span>
+          <span class="term-dot bg-matrix"></span>
+          <span class="ml-3 truncate text-body">ssh {profile.handle}@{profile.location.split(',')[0].toLowerCase()}</span>
+        </div>
+        <div class="p-5 font-mono text-[13px] sm:p-6">
+          <p><span class="text-matrix">$</span> <span class="text-head">ssh {profile.handle}@network-engineer</span></p>
+          <p class="mt-1 text-body/80">Authenticating... <span class="text-matrix">ok</span></p>
+          <p class="text-body/80">Connection established. Choose a channel:</p>
+
+          <ul class="mt-5 space-y-2">
+            {channels.map((c) => (
+              <li>
+                <a
+                  href={c.href}
+                  target={c.href.startsWith('http') ? '_blank' : undefined}
+                  rel={c.href.startsWith('http') ? 'noopener noreferrer' : undefined}
+                  class="group flex items-center gap-3 rounded-lg border border-line bg-core/60 px-4 py-3 transition-colors hover:border-matrix/60"
+                >
+                  <Icon name={c.icon} class="h-5 w-5 shrink-0 text-matrix" />
+                  <span class="w-16 shrink-0 text-body sm:w-20">{c.label}</span>
+                  <span class="min-w-0 truncate text-head group-hover:text-matrix">{c.value}</span>
+                  <Icon name="mdi:arrow-right" class="ml-auto h-4 w-4 shrink-0 text-body transition-transform group-hover:translate-x-1 group-hover:text-matrix" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <p class="mt-5 inline-flex items-center gap-2 text-xs text-body">
+            <Icon name="mdi:map-marker-outline" class="h-4 w-4 text-matrix" /> {profile.location} · UTC+5:30
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

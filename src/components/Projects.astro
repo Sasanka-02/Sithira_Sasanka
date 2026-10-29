@@ -1,0 +1,191 @@
+---
+/**
+ * Purpose: Interactive project grid with category filters and a detail dialog.
+ */
+import { Icon } from 'astro-icon/components';
+import { categories, projects } from '@/data/portfolio';
+import type { Env } from '@/types';
+
+const counts = Object.fromEntries(
+  categories.map((c) => [c.id, c.id === 'all' ? projects.length : projects.filter((p) => p.category === c.id).length])
+);
+const tabs = categories.filter((c) => counts[c.id] > 0);
+
+const envLabel: Record<Env, string> = { prod: 'internship', lab: 'lab', academic: 'academic' };
+const envBadge: Record<Env, string> = { prod: 'badge-green', lab: 'badge-muted', academic: 'badge-muted' };
+const categoryIcon: Record<string, string> = {
+  network: 'mdi:lan',
+  security: 'mdi:shield-lock-outline',
+  cloud: 'mdi:cloud-outline',
+  infra: 'mdi:server-network',
+  software: 'mdi:code-braces'
+};
+---
+
+<section id="projects" class="section border-t border-line">
+  <div class="container-x">
+    <div data-reveal>
+      <p class="eyebrow"><span class="text-body">//</span> 04 · projects</p>
+      <h2 class="section-title">Deployments, labs & builds</h2>
+      <p class="section-lead">
+        Work from my CWIT internship, labs I've built myself, and software from university.
+        Select a card for details.
+      </p>
+    </div>
+
+    <div class="mt-10 flex flex-wrap items-center gap-2" role="group" aria-label="Filter projects by category" data-reveal>
+      {tabs.map((t, i) => (
+        <button type="button" class="filter-btn" data-project-filter={t.id} aria-pressed={i === 0 ? 'true' : 'false'}>
+          {t.id === 'all' ? '*' : `--${t.label}`}
+          <span class="ml-1 text-body/60">{counts[t.id]}</span>
+        </button>
+      ))}
+      <p class="ml-auto hidden font-mono text-xs text-body sm:block" aria-live="polite">
+        <span class="text-matrix" id="project-count">{projects.length}</span> results
+      </p>
+    </div>
+
+    <ul class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-3" id="project-grid">
+      {projects.map((p) => (
+        <li data-project-card data-category={p.category} data-reveal>
+          <button
+            type="button"
+            class="card card-hover group flex h-full w-full flex-col p-5 text-left"
+            data-open-project={p.id}
+            aria-haspopup="dialog"
+          >
+            <div class="flex w-full items-center justify-between gap-3">
+              <span class="inline-flex items-center gap-2 font-mono text-[11px] uppercase tracking-wider text-body">
+                <Icon name={categoryIcon[p.category]} class="h-4 w-4 text-matrix" />
+                {p.category}
+              </span>
+              <span class={envBadge[p.env]}>
+                {p.env === 'prod' && <span class="h-1.5 w-1.5 rounded-full bg-matrix" />}
+                {envLabel[p.env]}
+              </span>
+            </div>
+
+            <h3 class="mt-4 text-lg font-semibold leading-snug transition-colors group-hover:text-matrix">{p.title}</h3>
+            <p class="mt-1 font-mono text-xs text-body/80">{p.context} · {p.period}</p>
+            <p class="mt-3 line-clamp-3 text-sm leading-relaxed">{p.summary}</p>
+
+            <div class="mt-auto w-full pt-5">
+              <ul class="flex flex-wrap gap-1.5">
+                {p.stack.slice(0, 3).map((s) => <li class="tag !px-2 !py-0.5 !text-[11px]">{s}</li>)}
+                {p.stack.length > 3 && <li class="tag !px-2 !py-0.5 !text-[11px]">+{p.stack.length - 3}</li>}
+              </ul>
+              <span class="mt-4 inline-flex items-center gap-1 font-mono text-xs text-crimson">
+                cat details
+                <Icon name="mdi:chevron-right" class="h-4 w-4 transition-transform group-hover:translate-x-1" />
+              </span>
+            </div>
+          </button>
+
+          <div hidden data-project-detail={p.id}>
+            <div class="flex flex-wrap items-center gap-2">
+              <span class={envBadge[p.env]}>{envLabel[p.env]}</span>
+              <span class="badge-muted">{p.status}</span>
+            </div>
+            <h3 class="mt-4 pr-10 text-2xl font-bold" data-dialog-title>{p.title}</h3>
+            <p class="mt-1 font-mono text-xs text-body">{p.context} · {p.period}</p>
+            <p class="mt-5 leading-relaxed">{p.summary}</p>
+            <p class="mt-6 font-mono text-xs uppercase tracking-widest text-matrix">$ cat highlights.log</p>
+            <ul class="mt-3 space-y-2.5">
+              {p.highlights.map((h) => (
+                <li class="flex gap-3 text-sm leading-relaxed">
+                  <span class="mt-0.5 font-mono text-matrix">›</span>
+                  <span class="text-head/90">{h}</span>
+                </li>
+              ))}
+            </ul>
+            <p class="mt-6 font-mono text-xs uppercase tracking-widest text-matrix">$ ls stack/</p>
+            <ul class="mt-3 flex flex-wrap gap-2">
+              {p.stack.map((s) => <li class="tag">{s}</li>)}
+            </ul>
+            {p.links && p.links.length > 0 && (
+              <div class="mt-7 flex flex-wrap gap-3">
+                {p.links.map((l, i) => (
+                  <a href={l.url} target="_blank" rel="noopener noreferrer" class={i === 0 ? 'btn-primary' : 'btn-ghost'}>
+                    <Icon name={l.icon} class="h-4 w-4" /> {l.label}
+                  </a>
+                ))}
+              </div>
+            )}
+          </div>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <dialog
+    id="project-dialog"
+    aria-labelledby="project-dialog-title"
+    class="max-h-[88vh] w-[calc(100%-2rem)] max-w-2xl overflow-y-auto rounded-xl border border-line bg-surface p-0 text-body shadow-2xl backdrop:bg-core/80 backdrop:backdrop-blur-sm"
+  >
+    <div class="term-bar sticky top-0 z-10">
+      <span class="term-dot bg-crimson"></span>
+      <span class="term-dot bg-body/40"></span>
+      <span class="term-dot bg-matrix"></span>
+      <span class="ml-3 truncate text-body" id="project-dialog-path">~/projects</span>
+      <button
+        type="button"
+        class="ml-auto inline-flex h-8 w-8 items-center justify-center rounded-md text-body hover:bg-core hover:text-head"
+        data-close-dialog
+        aria-label="Close details"
+      >
+        <Icon name="mdi:close" class="h-5 w-5" />
+      </button>
+    </div>
+    <div class="p-6 sm:p-8" id="project-dialog-body"></div>
+  </dialog>
+</section>
+
+<script>
+  // Filtering
+  const buttons = document.querySelectorAll<HTMLButtonElement>('[data-project-filter]');
+  const cards = document.querySelectorAll<HTMLElement>('[data-project-card]');
+  const count = document.getElementById('project-count');
+
+  buttons.forEach((btn) =>
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.projectFilter;
+      let shown = 0;
+      buttons.forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      cards.forEach((card) => {
+        const show = filter === 'all' || card.dataset.category === filter;
+        card.hidden = !show;
+        if (show) {
+          shown++;
+          card.classList.add('is-visible');
+        }
+      });
+      if (count) count.textContent = String(shown);
+    })
+  );
+
+  // Detail dialog: clone the card's <template> into a single shared <dialog>
+  const dialog = document.getElementById('project-dialog') as HTMLDialogElement | null;
+  const body = document.getElementById('project-dialog-body');
+  const path = document.getElementById('project-dialog-path');
+  let lastTrigger: HTMLElement | null = null;
+
+  document.querySelectorAll<HTMLButtonElement>('[data-open-project]').forEach((trigger) =>
+    trigger.addEventListener('click', () => {
+      const id = trigger.dataset.openProject;
+      const tpl = document.querySelector<HTMLElement>(`[data-project-detail="${id}"]`);
+      if (!dialog || !body || !tpl) return;
+      body.innerHTML = tpl.innerHTML;
+      body.querySelector('[data-dialog-title]')?.setAttribute('id', 'project-dialog-title');
+      if (path) path.textContent = `~/projects/${id}`;
+      lastTrigger = trigger;
+      dialog.showModal();
+    })
+  );
+
+  dialog?.querySelector('[data-close-dialog]')?.addEventListener('click', () => dialog.close());
+  // Close when clicking the backdrop
+  dialog?.addEventListener('click', (e) => {
+    if (e.target === dialog) dialog.close();
+  });
+  dialog?.addEventListener('close', () => lastTrigger?.focus());
+</script>

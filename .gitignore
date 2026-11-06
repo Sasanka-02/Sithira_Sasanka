@@ -51,8 +51,9 @@ temp/
 *.tmp
 *.temp
 
-# GitHub Pages output
+# Static export output
 out/
 
 # Old site and original photo (local only)
 legacy-backup/
+.vercel

@@ -71,14 +71,14 @@ const chips = [
         </a>
       </div>
 
-      <div class="mt-8 flex items-center gap-4 text-body">
-        <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="transition-colors hover:text-matrix">
+      <div class="-ml-2.5 mt-6 flex items-center gap-1 text-body">
+        <a href={profile.github} target="_blank" rel="noopener noreferrer" aria-label="GitHub" class="inline-flex h-11 w-11 items-center justify-center rounded-md transition-colors hover:text-matrix">
           <Icon name="mdi:github" class="h-6 w-6" />
         </a>
-        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="transition-colors hover:text-matrix">
+        <a href={profile.linkedin} target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" class="inline-flex h-11 w-11 items-center justify-center rounded-md transition-colors hover:text-matrix">
           <Icon name="mdi:linkedin" class="h-6 w-6" />
         </a>
-        <a href={`mailto:${profile.email}`} aria-label="Email" class="transition-colors hover:text-matrix">
+        <a href={`mailto:${profile.email}`} aria-label="Email" class="inline-flex h-11 w-11 items-center justify-center rounded-md transition-colors hover:text-matrix">
           <Icon name="mdi:email-outline" class="h-6 w-6" />
         </a>
       </div>
@@ -101,7 +101,7 @@ const chips = [
         </div>
         <div data-line class="text-body/70">prod = internship at CWIT · lab = self-built</div>
         {statusLines.map((line) => (
-          <div data-line class="flex gap-3 whitespace-nowrap">
+          <div data-line class="flex gap-2 sm:gap-3 sm:whitespace-nowrap">
             <span
               class:list={[
                 'w-[7ch] shrink-0',
@@ -112,8 +112,8 @@ const chips = [
             >
               [{line.state}]
             </span>
-            <span class="w-20 shrink-0 text-head sm:w-24">{line.key}</span>
-            <span class:list={['truncate', line.state === 'ALERT' ? 'text-crimson' : 'text-body']}>{line.value}</span>
+            <span class="w-[8.5ch] shrink-0 text-head sm:w-24">{line.key}</span>
+            <span class:list={['min-w-0 sm:truncate', line.state === 'ALERT' ? 'text-crimson' : 'text-body']}>{line.value}</span>
           </div>
         ))}
         <div data-line data-cmd="ping recruiter -c 1" class="pt-2">

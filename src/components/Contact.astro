@@ -40,7 +40,7 @@ const channels = [
           <span class="term-dot bg-matrix"></span>
           <span class="ml-3 truncate text-body">ssh {profile.handle}@{profile.location.split(',')[0].toLowerCase()}</span>
         </div>
-        <div class="p-5 font-mono text-[13px] sm:p-6">
+        <div class="p-4 font-mono text-[13px] sm:p-6">
           <p><span class="text-matrix">$</span> <span class="text-head">ssh {profile.handle}@network-engineer</span></p>
           <p class="mt-1 text-body/80">Authenticating... <span class="text-matrix">ok</span></p>
           <p class="text-body/80">Connection established. Choose a channel:</p>
@@ -55,8 +55,8 @@ const channels = [
                   class="group flex items-center gap-3 rounded-lg border border-line bg-core/60 px-4 py-3 transition-colors hover:border-matrix/60"
                 >
                   <Icon name={c.icon} class="h-5 w-5 shrink-0 text-matrix" />
-                  <span class="w-16 shrink-0 text-body sm:w-20">{c.label}</span>
-                  <span class="min-w-0 truncate text-head group-hover:text-matrix">{c.value}</span>
+                  <span class="hidden w-20 shrink-0 text-body sm:inline">{c.label}</span>
+                  <span class="min-w-0 break-all text-head group-hover:text-matrix sm:truncate sm:break-normal">{c.value}</span>
                   <Icon name="mdi:arrow-right" class="ml-auto h-4 w-4 shrink-0 text-body transition-transform group-hover:translate-x-1 group-hover:text-matrix" />
                 </a>
               </li>

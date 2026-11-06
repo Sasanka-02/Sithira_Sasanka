@@ -152,7 +152,7 @@
 
   /* Filter tabs shared by Skills and Projects */
   .filter-btn {
-    @apply rounded-md border border-line px-3 py-1.5 font-mono text-xs text-body transition-colors duration-200;
+    @apply rounded-md border border-line px-3 py-2.5 font-mono text-xs text-body transition-colors duration-200 sm:py-1.5;
   }
   .filter-btn:hover {
     @apply border-matrix/50 text-head;

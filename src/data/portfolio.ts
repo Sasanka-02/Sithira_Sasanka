@@ -30,7 +30,7 @@ export const profile: Profile = {
   location: 'Gampaha, Sri Lanka',
   phone: '+94 76 408 7950',
   email: 'sithirasasanka002@gmail.com',
-  linkedin: 'https://www.linkedin.com/in/sithira-sasanka-324383348/',
+  linkedin: 'https://www.linkedin.com/in/sithira-sasanka',
   github: 'https://github.com/Sasanka-02',
   photoUrl: '/profile.jpg',
   cvUrl: '/cv.pdf',

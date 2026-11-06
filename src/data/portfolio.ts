@@ -35,7 +35,7 @@ export const profile: Profile = {
   photoUrl: '/profile.jpg',
   cvUrl: '/cv.pdf',
   summary:
-    "Final-year IT undergraduate at SLIIT who recently completed a six-month network & systems internship at Colombo West International Terminal (CWIT), Sri Lanka's first fully automated container terminal.",
+    "IT undergraduate from SLIIT (final results pending) who recently completed a six-month network & systems internship at Colombo West International Terminal (CWIT), Sri Lanka's first fully automated container terminal.",
   about: [
     "From April to October 2026 I was an IT intern (Network & Systems) at CWIT, where the network doesn't just carry email. It connects driverless vehicles, cranes, remote operators and the automation systems that move containers around the clock.",
     'Working alongside the network team, I got hands-on at every layer: splicing fiber in the yard, configuring VLANs and trunks on aggregation switches, setting up vehicle Wi-Fi through the WLC, and assisting with firewall updates and an IPsec VPN to a banking partner during planned maintenance.',
@@ -468,6 +468,7 @@ export const experience: Experience[] = [
 
 export const credentials: Credential[] = [
   { name: 'Cisco Certified Network Associate (CCNA)', issuer: 'Cisco · currently studying, not yet certified', status: 'in-progress', date: '2026' },
+  { name: 'Fortinet Network Security Expert (NSE)', issuer: 'Fortinet Training Institute · currently studying', status: 'in-progress', date: '2026' },
   { name: 'Fortinet FortiGate (FortiOS)', issuer: 'Internship · CWIT', status: 'hands-on', date: '2026' },
   { name: 'Palo Alto Networks (PAN-OS)', issuer: 'Hotfix support at CWIT · HA lab', status: 'hands-on', date: '2026' },
   { name: 'Cisco WLC · Catalyst Center · CUCM', issuer: 'Internship · CWIT', status: 'hands-on', date: '2026' }
@@ -476,13 +477,14 @@ export const credentials: Credential[] = [
 export const degree: Degree = {
   degree: 'BSc (Hons) in Information Technology',
   institution: 'Sri Lanka Institute of Information Technology (SLIIT)',
-  period: 'Nov 2022 – Present',
-  status: 'Final year',
+  period: 'Nov 2022 – 2026',
+  status: 'Completed – Final results pending',
   specialisation: 'Specialisation in Information Technology',
   modules: [
     { code: 'IT4110', name: 'Computer Systems & Network Administration', network: true },
     { code: 'IT4020', name: 'Modern Topics in IT' },
-    { code: 'IT2070', name: 'Data Structures & Algorithms' }
+    { code: 'IT4090', name: 'Cloud Computing' },
+    { code: 'IT4040', name: 'Database Administration' }
   ],
   research: {
     title: 'SpeakFree: AI Speech Disorder Screening & Therapy Assistant',

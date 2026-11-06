@@ -19,7 +19,7 @@ import type {
 const RESEARCH_LIVE_URL = 'https://speakfreewebsite.vercel.app/';
 const researchLinks = [
   { label: 'Live website', url: RESEARCH_LIVE_URL, icon: 'mdi:open-in-new' },
-  { label: 'View code', url: 'https://github.com/Sasanka-02/ResearchProject', icon: 'mdi:github' }
+  { label: 'View code', url: 'https://github.com/Sasanka-02/R26-IT-086', icon: 'mdi:github' }
 ].filter((l) => l.url !== '');
 
 export const profile: Profile = {
